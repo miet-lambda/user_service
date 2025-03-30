@@ -26,7 +26,7 @@ from users.api import CreateUserView, AddMoneyView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
+
     path('api/v1/users/<int:user_id>/add_money/', AddMoneyView.as_view()),
 
     path('api/v1/register/', CreateUserView.as_view()),

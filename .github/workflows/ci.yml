@@ -36,7 +36,7 @@ jobs:
       run: pip install pylint
 
     - name: Run linter
-      run: pylint **/*.py
+      run: pylint --load-plugins pylint_django .
 
     - name: Run migrations
       run: python manage.py migrate
