@@ -24,10 +24,10 @@ from users.api import CreateUserView, AddMoneyView, RevokeAllTokensView, Version
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('api/v1/users/<int:user_id>/add_money/', AddMoneyView.as_view()),
-    path('api/v1/users/<int:user_id>/revoke_tokens/', RevokeAllTokensView.as_view()),
+    path('api/v1/users/<int:user_id>/add_money/', AddMoneyView.as_view(), name='add-money'),
+    path('api/v1/users/<int:user_id>/revoke_tokens/', RevokeAllTokensView.as_view(), name='revoke-tokens'),
 
-    path('api/v1/register/', CreateUserView.as_view()),
+    path('api/v1/register/', CreateUserView.as_view(), name='register'),
     path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/token/verify/', VersionTokenVerifyView.as_view(), name='token_verify'),
     path('api/v1/token/refresh/', VersionTokenRefreshView.as_view(), name='token_refresh'),

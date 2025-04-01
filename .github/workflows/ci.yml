@@ -11,12 +11,36 @@ on:
       - develop
 
 jobs:
-  test:
+  main:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     strategy:
       matrix:
-        python-version: [3.12]
+        python-version: [3.12, 3.11]
+
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      DEBUG: "True"
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_HOST: localhost
+      DB_PORT: 5432
 
     steps:
     - name: Checkout repository
@@ -32,6 +56,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Install PostgreSQL client
+      run: sudo apt-get install -y postgresql-client
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432; do
+          sleep 1
+        done
+
     - name: Install pylint
       run: pip install pylint
 
@@ -39,7 +72,7 @@ jobs:
       run: pylint --load-plugins pylint_django .
 
     - name: Run migrations
-      run: python manage.py migrate
+      run: python manage.py migrate --noinput
 
     - name: Run tests
       run: python manage.py test

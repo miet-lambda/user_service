@@ -1,12 +1,15 @@
+from decimal import Decimal
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework import exceptions
+from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer,
     TokenRefreshSerializer,
     TokenVerifySerializer,
 )
-from rest_framework_simplejwt.tokens import UntypedToken
-from rest_framework import exceptions
+
+
 
 UserModel = get_user_model()
 
@@ -29,7 +32,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AddMoneyInputSerializer(serializers.Serializer):
-    amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0.01)
+    amount = serializers.DecimalField(
+        max_digits=10, decimal_places=2, min_value=Decimal("0.01")
+    )
 
 
 class VersionTokenSerializer(TokenObtainPairSerializer):
@@ -50,8 +55,8 @@ class VersionTokenRefreshSerializer(TokenRefreshSerializer):
             user = UserModel.objects.get(id=user_id)
             if refresh.payload.get("version") != user.token_version:
                 raise exceptions.AuthenticationFailed("Token revoked")
-        except UserModel.DoesNotExist:
-            raise exceptions.AuthenticationFailed("User not found")
+        except UserModel.DoesNotExist as e:
+            raise exceptions.AuthenticationFailed(f"User not found: {e}")
 
         return data
 
@@ -66,7 +71,7 @@ class VersionTokenVerifySerializer(TokenVerifySerializer):
                 user = UserModel.objects.get(id=user_id)
                 if token.payload.get("version") != user.token_version:
                     raise exceptions.AuthenticationFailed("Token revoked")
-            except UserModel.DoesNotExist:
-                raise exceptions.AuthenticationFailed("User not found")
+            except UserModel.DoesNotExist as e:
+                raise exceptions.AuthenticationFailed(f"User not found: {e}")
 
         return {}
