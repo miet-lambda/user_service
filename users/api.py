@@ -1,6 +1,7 @@
 from decimal import Decimal
 from rest_framework import permissions
 from rest_framework.generics import CreateAPIView
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import HTTP_403_FORBIDDEN
 from rest_framework.views import APIView
@@ -25,7 +26,7 @@ class AddMoneyView(APIView):
         permissions.IsAuthenticated
     ]
 
-    def post(self, request, user_id):
+    def post(self, request: Request, user_id):
         cur_user = request.user
         if cur_user.id != user_id and not cur_user.is_staff:
             return Response(
@@ -35,7 +36,6 @@ class AddMoneyView(APIView):
 
         serializer = serializers.AddMoneyInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         cur_user.money_balance += Decimal(request.data['amount'])
         cur_user.save()
 
