@@ -10,10 +10,15 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView
 )
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema
 from users import serializers
 
 
 
+@extend_schema(
+    request=serializers.RegisterUserSerializer,
+    responses=serializers.UserSerializer,
+)
 class CreateUserView(CreateAPIView):
 
     model = get_user_model()
@@ -28,6 +33,7 @@ class AddMoneyView(APIView):
     permission_classes = [
         permissions.IsAuthenticated
     ]
+    serializer_class = serializers.AddMoneyInputSerializer
 
     def post(self, request: Request, user_id):
         cur_user = request.user

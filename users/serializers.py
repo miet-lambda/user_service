@@ -15,7 +15,6 @@ UserModel = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     password = serializers.CharField(write_only=True)
 
     def create(self, validated_data):
@@ -29,6 +28,11 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ("id", "login", "password", "money_balance")
+
+class RegisterUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ("login", "password")
 
 
 class AddMoneyInputSerializer(serializers.Serializer):
