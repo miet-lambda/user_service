@@ -444,7 +444,8 @@ disable=raw-checker-failed,
         C0116,   # Missing function or method docstring,
         import-outside-toplevel,
         abstract-method,
-        R0901
+        R0901,
+        W0613
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

@@ -37,6 +37,16 @@ class User(AbstractBaseUser):
     def is_active(self):
         return True
 
+    @property
+    def is_staff(self):
+        return True
+
+    def has_module_perms(self, app_label):
+        return True
+
+    def has_perm(self, perm, obj=None):
+        return True
+
     def get_last_login(self):
         return None
 
