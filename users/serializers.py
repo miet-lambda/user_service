@@ -35,7 +35,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
 
 class AddMoneyInputSerializer(serializers.Serializer):
-    amount = serializers.DecimalField(max_digits=1000,decimal_places=100)
+    amount = serializers.DecimalField(max_digits=30,decimal_places=10)
     def validate_amount(self, value):
         if value <= Decimal('0'):
             raise serializers.ValidationError("The value must be positive")

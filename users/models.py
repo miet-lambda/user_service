@@ -10,8 +10,8 @@ class User(AbstractBaseUser):
     password = models.CharField(max_length=255)
 
     money_balance = models.DecimalField(
-        max_digits=1000,
-        decimal_places=100,
+        max_digits=30,
+        decimal_places=10,
         null=False,
         blank=False,
         default=Decimal('0.00'),
