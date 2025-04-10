@@ -3,29 +3,40 @@ from rest_framework import permissions
 from rest_framework.generics import CreateAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.status import HTTP_403_FORBIDDEN, HTTP_200_OK
+from rest_framework.status import HTTP_403_FORBIDDEN, HTTP_200_OK, HTTP_201_CREATED
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView
 )
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import extend_schema
 from users import serializers
 
 
 
-@extend_schema(
-    request=serializers.RegisterUserSerializer,
-    responses=serializers.UserSerializer,
-)
 class CreateUserView(CreateAPIView):
 
     model = get_user_model()
     permission_classes = [
         permissions.AllowAny
     ]
-    serializer_class = serializers.UserSerializer
+    serializer_class = serializers.RegisterUserSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = serializers.RegisterUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+
+        response_serializer = serializers.UserSerializer(serializer.instance)
+        headers = self.get_success_headers(response_serializer.data)
+        return Response(
+            response_serializer.data,
+            status=HTTP_201_CREATED,
+            headers=headers
+        )
+
+
 
 
 class AddMoneyView(APIView):

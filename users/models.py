@@ -10,8 +10,8 @@ class User(AbstractBaseUser):
     password = models.CharField(max_length=255)
 
     money_balance = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+        max_digits=30,
+        decimal_places=10,
         null=False,
         blank=False,
         default=Decimal('0.00'),
@@ -35,6 +35,16 @@ class User(AbstractBaseUser):
 
     @property
     def is_active(self):
+        return True
+
+    @property
+    def is_staff(self):
+        return True
+
+    def has_module_perms(self, app_label):
+        return True
+
+    def has_perm(self, perm, obj=None):
         return True
 
     def get_last_login(self):
